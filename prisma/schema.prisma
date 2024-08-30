@@ -2,6 +2,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  output = "../node_modules/prisma/prisma-client"
 }
 
 datasource db {
@@ -19,3 +20,4 @@ model NFT {
   imageuri   String
   listed Boolean @default(true)
 }
+
