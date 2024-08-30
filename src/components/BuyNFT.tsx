@@ -23,6 +23,36 @@ async function isBlockhashExpired(connection: Connection, lastValidBlockHeight: 
   return (currentBlockHeight > lastValidBlockHeight - 150);
 }
 
+const useExternalConnection = (url :any) => {
+  const [data, setData] = useState<Connection>(new Connection(clusterApiUrl("mainnet-beta"), "confirmed"));
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(url, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        if (!res.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const result:Connection = await res.json();
+        setData(result);
+      } catch (err: any) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [url]);
+  return { data, loading, error };
+}
+
+
 export default function BuyNFT({ id } : {id: string}){
     const [selectedToken, setSelectedToken] = useState<Token>({
       address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
@@ -35,7 +65,12 @@ export default function BuyNFT({ id } : {id: string}){
     const [tokenList,setTokenList] = useState<Token[]>([])
     const [defaultPriceValue, setDefaultPriceValue] = useState<number>(0);
   
-    const connection = getConnection();
+    // const res = await fetch('http://localhost:3000/api/fetchlist', {
+    //   method: 'GET',
+    //   headers: { 'Content-Type': 'application/json' }
+    // });
+    // const list = (await res.json())
+    const connection = new Connection(clusterApiUrl("mainnet-beta"), "confirmed");
     const { publicKey, sendTransaction } = useWallet();
 
     useEffect(() => {
