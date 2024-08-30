@@ -9,8 +9,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "NFT->X-TOKEN",
-  description: "Liquidate an NFT to any token",
+  title: "Liquotic",
+  description: "Buy/Swap any listed NFT, with any SPL-Token!",
 };
 
 export default function RootLayout({
