@@ -49,6 +49,10 @@ let redis: Redis | null = null;
 // }
 
 export async function GET(req: NextRequest, res: NextResponse){
+  try{
   const nftList = await prisma.nFT.findMany();
   return NextResponse.json(nftList);
+  } catch(error){
+    return NextResponse.error()
+  }
 }

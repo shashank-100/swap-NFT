@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 // POST /api/post
 export async function POST(req: NextRequest) {
+  try{
       const body = await req.json();
       const { id, slug, price, name, description, imageuri, listed } = body;
   
@@ -18,4 +19,7 @@ export async function POST(req: NextRequest) {
         },
       });
       return NextResponse.json(result);
+    } catch(err){
+      return NextResponse.error();
+    }
   }
