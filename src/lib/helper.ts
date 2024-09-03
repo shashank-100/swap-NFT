@@ -1,4 +1,4 @@
-import { NFT } from "@prisma/client";
+import { NFT } from "@/lib/types";
 import { Connection,clusterApiUrl } from "@solana/web3.js";
 
 export const trunkDescription = (description: string) => {
