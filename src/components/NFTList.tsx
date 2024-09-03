@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useWallet } from '@solana/wallet-adapter-react';
 import { submitData, getFastNFTList, getRowCount } from "@/app/lib/handle_nft_display";
 import useSWR from 'swr'
-import { NFT } from "@prisma/client";
+import { NFT } from "@/lib/types";
 import NFTSkeleton from "./NFTSkeleton";
 import Pagination from "./Pagination";
 import { paginate } from "./Pagination";
