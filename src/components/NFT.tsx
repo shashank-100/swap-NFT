@@ -29,7 +29,7 @@ export function NFTComponent({ id, children }: { id: string, children?: React.Re
       try{
         const response = await axios.get(`/api/listings`, {
           params: {
-              id: id,  // Pass the required ID here
+              id: id,
           },
           });
           if(response.status = 200){

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { NextRequest, NextResponse } from 'next/server';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function GET(req: NextApiRequest, res: NextApiResponse) {
     const { id } = req.query;
 
     try {
@@ -12,8 +12,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
         });
 
-        res.status(200).json(response.data);
+        return NextResponse.json(response);
     } catch (error: any) {
-        res.status(error.response?.status || 500).json({ message: error.message });
+        return NextResponse.error()
     }
 }
