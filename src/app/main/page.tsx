@@ -42,12 +42,13 @@ export default function MainPage(){
 
 
     const handleClick = (e : any) => {
+        e.preventDefault();
         const nft_id = extractId(nftUrl);
         console.log(nft_id)
         
         if(nft_id){
-            const endpoint = `/buy/${nft_id}`;
-            router.push(endpoint);
+            // const endpoint = `/buy/${nft_id}`;
+            window.open(`https://liquotic.vercel.app/buy/${nft_id}`)
         }
         else{
             toast({
@@ -60,7 +61,7 @@ export default function MainPage(){
         const nft_id = extractId(nftUrl);
         
         if(nft_id){
-            const endpoint = `https://dial.to/?action=solana-action:http://localhost:3000/api/actions/swap/${nft_id}&cluster=mainnet`
+            const endpoint = `https://dial.to/?action=solana-action:http://liquotic.vercel.app/api/actions/swap/${nft_id}&cluster=mainnet`
             window.open(endpoint);
         }
         else{

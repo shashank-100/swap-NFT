@@ -108,7 +108,7 @@ export async function submitData(): Promise<void>{
     for(let nft of nft_list){
         try {
             const body = nft;
-            await fetch('http://localhost:3000/api/post', {
+            await fetch('http://liquotic.vercel.app/api/post', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(body),
@@ -122,7 +122,7 @@ export async function submitData(): Promise<void>{
 
  export async function getFastNFTList() {
     try {
-      const res = await fetch('http://localhost:3000/api/fetchlist', {
+      const res = await fetch('http://liquotic.vercel.app/api/fetchlist', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -137,7 +137,7 @@ export async function submitData(): Promise<void>{
 
  export async function getRowCount() {
     try {
-      const res = await fetch('http://localhost:3000/api/count', {
+      const res = await fetch('http://liquotic.vercel.app/api/count', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       });

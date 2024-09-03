@@ -249,7 +249,7 @@ export default function BuyNFT({ id } : {id: string}){
                 <Button className="w-[18rem] mx-auto" onClick={handleSubmitOnMarketBuy}>
                   Buy Now with {selectedToken.symbol}
                 </Button>
-                    <Button className="w-[18rem] mx-auto bg-sky-400 hover:bg-sky-700" onClick={() => {window.open(`https://dial.to/?action=solana-action:http://localhost:3000/api/actions/swap/${id}&cluster=mainnet`)}}>Unfurl as Blink</Button>         
+                    <Button className="w-[18rem] mx-auto bg-sky-400 hover:bg-sky-700" onClick={() => {window.open(`https://dial.to/?action=solana-action:http://liquotic.vercel.app/api/actions/swap/${id}&cluster=mainnet`)}}>Unfurl as Blink</Button>         
                 </>
                 )
                 }
