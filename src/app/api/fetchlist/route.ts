@@ -38,7 +38,9 @@ export async function GET(req: NextRequest, res: NextResponse) {
       nftList = await prisma.nFT.findMany();
     }
 
-    return NextResponse.json(nftList);
+    const response = NextResponse.json(nftList);
+    response.headers.set('Cache-Control', `s-maxage=${cacheExpirationTime}, stale-while-revalidate`);
+    return response;
   } catch (error) {
     const nftList = await prisma.nFT.findMany();
     console.error('Error fetching NFT list:', error);
