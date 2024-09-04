@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { NextApiRequest, NextApiResponse } from 'next';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest, res: NextResponse) {
@@ -14,8 +13,9 @@ export async function GET(req: NextRequest, res: NextResponse) {
             }
         });
 
-        return NextResponse.json(response, {status: 200});
+        return NextResponse.json(response.data, {status: 200});
     } catch (error: any) {
-        return NextResponse.error()
+        console.log("ERROR FETCHING TOKEN LISTINGS SERVER SIDE: ", error)
+        return NextResponse.json({ error: 'Failed to fetch listings' }, { status: 500 });
     }
 }

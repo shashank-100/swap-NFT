@@ -27,16 +27,14 @@ export function NFTComponent({ id, children }: { id: string, children?: React.Re
     }
     setTimeout(async () => {
       try{
-        // const response = await axios.get(`/api/listings`, {
-        //   params: {
-        //       id: id,
-        //   },
-        //   });
-        const response = await axios.get(`https://api-mainnet.magiceden.dev/v2/tokens/${id}/listings`, {
-          headers: {
-              "Accept": "application/json"
-          }
+        const response = await axios.get(`/api/listings`, {
+          params: { id }
       });
+      //   const response = await axios.get(`https://api-mainnet.magiceden.dev/v2/tokens/${id}/listings`, {
+      //     headers: {
+      //         "Accept": "application/json"
+      //     }
+      // });
           if(response.status = 200){
               const listings = response.data;
               if(listings.length == 0){
