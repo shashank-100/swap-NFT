@@ -33,18 +33,18 @@ export function NFTComponent({ id, children }: { id: string, children?: React.Re
       //         "Accept": "application/json"
       //     }
       // });
-          if(response.status = 200){
-              const listings = response.data;
+          // if(response.status = 200){
+              const listings = response;
               if(listings.length == 0){
                 setIsListed(false);
               }
               else{
               setIsListed(true);
               }
-          }
-          else if(response.status =400){
-            setIsValidNFT(false);
-          }
+          // }
+          // else if(response.status =400){
+          //   setIsValidNFT(false);
+          // }
         }
         catch(err){
           setIsValidNFT(false);

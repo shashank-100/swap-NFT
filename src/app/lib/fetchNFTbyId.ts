@@ -116,7 +116,7 @@ export async function getListingByID(id: string){
           "Accept": "application/json"
       }
   });
-  return response;
+  return response.data;
   }
   catch(err){
     if (err instanceof AxiosError) console.log(err.response?.data.errors);
