@@ -17,10 +17,3 @@ export const trunkDescription = (description: string) => {
         array[randomIndex], array[currentIndex]];
     }
   }
-
-  export function getConnection(){
-    const connection = new Connection(
-        `https://mainnet.helius-rpc.com/?api-key=23e04ac8-5d92-4ea2-b5c6-f93d3314bf07`, "confirmed"
-      );
-      return connection;
-}

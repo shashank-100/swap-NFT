@@ -16,7 +16,6 @@ import { getPriceInUserToken } from "@/app/lib/rate";
 import { Token,NFTMetadata } from '@/lib/types';
 require('@solana/wallet-adapter-react-ui/styles.css');
 import "react-toastify/dist/ReactToastify.css";
-import { getConnection } from '@/lib/helper';
 
 async function isBlockhashExpired(connection: Connection, lastValidBlockHeight: number) {
   let currentBlockHeight = (await connection.getBlockHeight('finalized'));
@@ -70,7 +69,9 @@ export default function BuyNFT({ id } : {id: string}){
     //   headers: { 'Content-Type': 'application/json' }
     // });
     // const list = (await res.json())
-    const connection = new Connection(clusterApiUrl("mainnet-beta"), "confirmed");
+    const connection = new Connection(
+      `https://mainnet.helius-rpc.com/?api-key=23e04ac8-5d92-4ea2-b5c6-f93d3314bf07`, "confirmed"
+    );
     const { publicKey, sendTransaction } = useWallet();
 
     useEffect(() => {
