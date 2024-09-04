@@ -1,7 +1,7 @@
 "use client"
 
 
-import { getMetadataByMint } from "@/app/lib/fetchNFTbyId";
+import { getListingByID, getMetadataByMint } from "@/app/lib/fetchNFTbyId";
 import { Card, CardContent, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import React, { useState, useEffect, useMemo, useCallback } from "react";
@@ -27,9 +27,7 @@ export function NFTComponent({ id, children }: { id: string, children?: React.Re
     }
     setTimeout(async () => {
       try{
-        const response = await axios.get(`/api/listings`, {
-          params: { id }
-      });
+        const response = await getListingByID(id);
       //   const response = await axios.get(`https://api-mainnet.magiceden.dev/v2/tokens/${id}/listings`, {
       //     headers: {
       //         "Accept": "application/json"
