@@ -70,7 +70,7 @@ export default function BuyNFT({ id } : {id: string}){
     // });
     // const list = (await res.json())
     const connection = new Connection(
-      `https://mainnet.helius-rpc.com/?api-key=23e04ac8-5d92-4ea2-b5c6-f93d3314bf07`, "confirmed"
+      `https://mainnet.helius-rpc.com/?api-key=d540ef8c-3625-4d0d-8e65-869e59ff8e69`, "confirmed"
     );
     const { publicKey, sendTransaction } = useWallet();
 
@@ -107,7 +107,7 @@ export default function BuyNFT({ id } : {id: string}){
       const priceInSol = (await getPriceInSol(priceInUserToken, token)) || 0;
       try {
         const [swaptx_serialized, buynfttx_serialized] = await Buy(publicKey?.toBase58() || '', id, priceInUserToken, selectedToken.address);
-        const [swaptx, buynfttx] = [VersionedTransaction.deserialize(swaptx_serialized),VersionedTransaction.deserialize(Buffer.from(buynfttx_serialized))]
+        const [swaptx, buynfttx] = [VersionedTransaction.deserialize(swaptx_serialized),VersionedTransaction.deserialize(Buffer.from(buynfttx_serialized) as Uint8Array)]
         const {
           context: { slot: minContextSlot },
           value: { blockhash, lastValidBlockHeight },

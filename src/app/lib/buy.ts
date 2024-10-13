@@ -5,34 +5,6 @@ import { Transaction, VersionedTransaction, PublicKey, Connection,TransactionIns
 import fetch from 'cross-fetch';
 import bs58 from 'bs58';
 
-async function getPriorityFeeEstimate(priorityLevel: string, transaction: VersionedTransaction) {
-  const HELIUS_API_KEY = process.env.HELIUS_API_KEY
-  const response = await fetch(`https://mainnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      jsonrpc: "2.0",
-      id: "1",
-      method: "getPriorityFeeEstimate",
-      params: [
-        {
-          transaction: bs58.encode(transaction.serialize()), // Pass the serialized transaction in Base58
-          options: { priorityLevel: priorityLevel },
-        },
-      ],
-    }),
-  });
-  const data = await response.json();
-  console.log(
-    "Fee in function for",
-    priorityLevel,
-    " :",
-    data.result.priorityFeeEstimate
-  );
-  return data.result;
-}
-
-
 export async function Buy(buyerAddress: string, mint: string, priceInUserToken: number, token: string){
     const buyer = new PublicKey(buyerAddress);
     const HELIUS_API_KEY = process.env.HELIUS_API_KEY || ''
@@ -157,7 +129,7 @@ export async function Buy(buyerAddress: string, mint: string, priceInUserToken: 
         if (accountInfo) {
           const addressLookupTableAccount = new AddressLookupTableAccount({
             key: new PublicKey(addressLookupTableAddress),
-            state: AddressLookupTableAccount.deserialize(accountInfo.data),
+            state: AddressLookupTableAccount.deserialize(accountInfo.data as Uint8Array),
           });
           acc.push(addressLookupTableAccount);
         }
