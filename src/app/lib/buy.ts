@@ -222,12 +222,7 @@ export async function Buy(buyerAddress: string, mint: string, priceInUserToken: 
         }).compileToV0Message([...lookup_tables_nft]);
 
     const finalTX1 = new VersionedTransaction(m1);
-    // const rpcResponse = await connection.simulateTransaction(tx1, {
-    //   replaceRecentBlockhash: true,
-    //   sigVerify: false,
-    // });
-    // const unitsConsumed = rpcResponse.value.unitsConsumed;
-
+  
     const finalTX2 = new VersionedTransaction(m2);
     return [finalTX1.serialize(), finalTX2.serialize()];
 }

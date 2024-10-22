@@ -17,7 +17,6 @@ export async function LandingPage() {
     <div className="min-h-[100dvh] flex flex-col bg-[#0f0f0f] text-white">
       <header className="px-4 lg:px-6 h-14 flex items-center justify-between">
         <Link href="#" className="flex items-center justify-center" prefetch={false}>
-          <LollipopIcon className="h-6 w-6 text-[#00d8ff]" />
           <span className="sr-only">Liquotic</span>
         </Link>
         <nav className="hidden lg:flex gap-4 sm:gap-6">
@@ -95,28 +94,6 @@ function EclipseIcon(props: any) {
     >
       <circle cx="12" cy="12" r="10" />
       <path d="M12 2a7 7 0 1 0 10 10" />
-    </svg>
-  )
-}
-
-
-function LollipopIcon(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.3-4.3" />
-      <path d="M11 11a2 2 0 0 0 4 0 4 4 0 0 0-8 0 6 6 0 0 0 12 0" />
     </svg>
   )
 }
