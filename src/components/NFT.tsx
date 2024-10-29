@@ -28,12 +28,6 @@ export function NFTComponent({ id, children }: { id: string, children?: React.Re
     setTimeout(async () => {
       try{
         const response = await getListingByID(id);
-      //   const response = await axios.get(`https://api-mainnet.magiceden.dev/v2/tokens/${id}/listings`, {
-      //     headers: {
-      //         "Accept": "application/json"
-      //     }
-      // });
-          // if(response.status = 200){
               const listings = response;
               if(listings.length == 0){
                 setIsListed(false);
@@ -41,10 +35,6 @@ export function NFTComponent({ id, children }: { id: string, children?: React.Re
               else{
               setIsListed(true);
               }
-          // }
-          // else if(response.status =400){
-          //   setIsValidNFT(false);
-          // }
         }
         catch(err){
           setIsValidNFT(false);
