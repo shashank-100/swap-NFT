@@ -42,7 +42,7 @@ export const getFloorPrice = async (slug: string): Promise<number|undefined> => 
 
     export const getPriceInUserToken = async (floorPrice: number, mint: string): Promise<number|undefined> => {
       try{
-        const res = await fetch(`https://price.jup.ag/v6/price?ids=So11111111111111111111111111111111111111112&vsToken=${mint}`);
+        const res = await fetch(`https://api.jup.ag/price/v2?ids=So11111111111111111111111111111111111111112&vsToken=${mint}`);
         const data = await res.json();
         const price = ((data.data["So11111111111111111111111111111111111111112"]?.price * floorPrice)) || 0;
         return price;

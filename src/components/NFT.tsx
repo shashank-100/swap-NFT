@@ -20,6 +20,8 @@ export function NFTComponent({ id, children }: { id: string, children?: React.Re
   const [isValidNFT, setIsValidNFT] = useState(true);
   const [isListed, setIsListed] = useState(true);
 
+
+
   const fetchNFTMetadata = useCallback(async () => {
     const meta = await getMetadataByMint(id);
     if (meta) {

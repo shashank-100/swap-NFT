@@ -5,6 +5,7 @@ import { GeistMono } from 'geist/font/mono';
 import { cn } from "@/lib/utils"
 import { Toaster } from "@/components/ui/toaster"
 import "./globals.css";
+import { SolanaProvider } from "@/components/ContextProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,8 +24,12 @@ export default function RootLayout({
       <body className={cn(
           "min-h-screen bg-background font-sans antialiased",
           GeistSans.className
-        )}>{children}
+        )}>
+          <SolanaProvider>
+          {children}
+          </SolanaProvider>
         <Toaster />
+
         </body>
     </html>
   );
