@@ -1,25 +1,21 @@
-// main app page
 "use client"
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState, useMemo } from "react";
-import { useRouter } from 'next/navigation'
+import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { ConnectionProvider, WalletProvider, useWallet } from "@solana/wallet-adapter-react";
-import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
-import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
-import { clusterApiUrl } from "@solana/web3.js";
-import { PhantomWalletAdapter, LedgerWalletAdapter } from "@solana/wallet-adapter-wallets";
-import DisplayNFTs from "@/components/DisplayNFTs";
-import { ConnectWalletButton } from "@/components/ConnectWalletButton"
+import { motion } from "framer-motion";
+import { Search, Zap } from 'lucide-react';
 
 require('@solana/wallet-adapter-react-ui/styles.css');
 
 export default function MainPage(){
     const [nftUrl, setNftUrl] = useState('');
-    const router = useRouter();
     const { toast } = useToast()
+
+    const baseUrl = process.env.NODE_ENV === 'production'
+    ? 'https://liquotic.vercel.app'
+    : 'http://localhost:3000';
 
     const extractId = (input: string): string | null => {
         if (input.includes('tensor.trade/item/')) {
@@ -31,7 +27,7 @@ export default function MainPage(){
             const parts = input.split('/item-details/');
             return parts[1] ? parts[1].split('?')[0] : null;
         }
-        //check for base58 encoded id
+
         const nftIdRegex = /^[A-HJ-NP-Za-km-z1-9]*$/;
         if (nftIdRegex.test(input)) {
             return input;
@@ -40,24 +36,22 @@ export default function MainPage(){
         return null;
     }
 
-
-    const handleClick = (e : any) => {
+    const handleClick = (e : React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         const nft_id = extractId(nftUrl);
-        console.log(nft_id)
         
         if(nft_id){
-            // const endpoint = `/buy/${nft_id}`;
-            window.open(`https://liquotic.vercel.app/buy/${nft_id}`)
+            window.open(`${baseUrl}/buy/${nft_id}`)
         }
         else{
             toast({
-                title: "Please enter a valid NFT Id/Tensor URL."
+                title: "Please enter a valid NFT Id/Tensor URL.",
+                variant: "destructive",
             })
         }
     }
 
-    const handleBlink = (e :any) => {
+    const handleBlink = (e : React.MouseEvent<HTMLButtonElement>) => {
         const nft_id = extractId(nftUrl);
         
         if(nft_id){
@@ -66,50 +60,66 @@ export default function MainPage(){
         }
         else{
             toast({
-                title: "Please enter a valid NFT Id/Tensor URL."
+                title: "Please enter a valid NFT Id/Tensor URL.",
+                variant: "destructive",
             })
         }
     }
 
-    const network = WalletAdapterNetwork.Mainnet;
-    const endpoint = useMemo(() => clusterApiUrl(network), [network]);
-    const wallet = useWallet()
-    console.log(wallet.connected)
-    const wallets = useMemo(
-        () => [
-            new PhantomWalletAdapter(),new LedgerWalletAdapter()
-        ],
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [network]
-    );
-
     return(
-        <>
-        <ConnectionProvider endpoint={endpoint}>
-            <WalletProvider wallets={wallets} autoConnect>
-                <WalletModalProvider>
-                    <ConnectWalletButton/>
-                {/* <WalletMultiButton className="m-8"/> */}
-                <div className="flex flex-col items-center my-8 mt-40">
-                    <h1 className="font-extrabold rounded-sm text-2xl md:text-3xl lg:text-4xl mb-4">Find Any Listed NFT</h1>
-                    <Input 
-                    className="w-full max-w-[48rem] mb-4 mx-4 px-4 h-12" 
-                    placeholder="Tensor/Magiceden URL or NFT Id"
-                    spellCheck={false}
-                    onChange={(e) => {setNftUrl(e.target.value)}} 
-                    />
-                    <div className="flex flex-row">
-                    <Button type="submit" className="mx-2" onClick={handleClick}>Buy with any Token</Button>
-                    <Button type="submit" className="mx-2 bg-blue-500 hover:bg-teal-700 text-white" onClick={handleBlink}>Turn into a Blink</Button>
+        <div className="min-h-screen bg-gradient-to-br bg-black text-white px-4 py-8">
+            <div 
+                className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                        w-[60rem] h-[40rem] rounded-full 
+                        bg-gradient-to-r from-blue-500/50 via-cyan-400/40 to-teal-300/30 
+                        blur-[8rem] opacity-70 z--20"
+            ></div>
+            <div className="container mx-auto mt-32">
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="flex flex-col items-center my-16"
+                >
+                    <div className="text-center w-full">
+                        <h1 className="text-5xl md:text-7xl font-extrabold glow-text tracking-tight mb-2">
+                            Liquotic
+                        </h1>
+                        
+                        <p className="text-xl md:text-2xl tracking-tighter font-mono font-semibold text-gray-400 max-w-2xl mx-auto mb-12">
+                            Buy any listed NFT, with any token!
+                        </p>
                     </div>
-                    <div className="mx-auto items-center mt-2 pt-32">
-                        <h3 className="font-medium ml-6 text-1xl sm:text-2xl md:text-2xl lg:text-3xl m-2 tracking-[-0.07rem] opacity-80">Some NFTs from available collections</h3>
-                        <DisplayNFTs/>
+                    <div className="w-full max-w-2xl">
+                        <div className="relative">
+                            <Input 
+                                className="w-full px-6 h-20 mb-8 text-lg bg-white/10 border-white/20 text-white placeholder:text-white/50 placeholder:text-lg rounded-full"
+                                placeholder="NFT Mint Address, Magiceden or Tensor URL"
+                                spellCheck={false}
+                                onChange={(e) => {setNftUrl(e.target.value)}} 
+                            />
+                            <Search className="absolute right-6 top-1/2 -translate-y-1/2 text-white/50" />
+                        </div>
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                            <Button 
+                                type="submit" 
+                                className="w-full h-12 sm:w-auto tracking-tight bg-pink-400 text-white text-xl font-bold py-3 px-6 rounded-full transition duration-300 ease-in-out transform hover:bg-pink-500 hover:bg-opacity-80"
+                                onClick={handleClick}
+                            >
+                                Buy with Any Token
+                            </Button>
+                            <Button 
+                                type="submit" 
+                                className="w-full h-12 sm:w-auto tracking-tight bg-cyan-400 text-white text-xl font-bold py-3 px-6 rounded-full transition duration-300 ease-in-out transform hover:bg-cyan-500 hover:bg-opacity-80"
+                                onClick={handleBlink}
+                            >
+                                <Zap className="mr-2 h-5 w-5" />
+                                Turn into a Blink
+                            </Button>
+                        </div>
                     </div>
-                </div>
-                </WalletModalProvider>
-                </WalletProvider>
-            </ConnectionProvider>
-        </>
+                </motion.div>
+            </div>
+        </div>
     )
 }

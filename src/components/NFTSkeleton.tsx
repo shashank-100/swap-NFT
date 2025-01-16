@@ -4,13 +4,14 @@ import { Button } from "./ui/button";
 
 export default function NFTSkeleton(){
     return (
-    <Card className="w-64 max-h-[40rem] m-4 hover:cursor-pointer">
-        <Skeleton className="w-full rounded-t-lg object-cover aspect-[4/3]"/>
-        <CardContent className="p-6 space-y-2">
-        <Skeleton className="h-6 w-10"/>
-        <Skeleton className="h-6 w-52 mb-4"/>
-        <Button disabled className="w-[12rem] mx-auto">Connect Wallet</Button>
-        </CardContent>
-    </Card>
+        <Card className="w-full max-w-sm mx-auto overflow-hidden rounded-xl shadow-lg bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700">
+            <Skeleton className="w-full h-64"/>
+            <CardContent className="p-6 space-y-4">
+                <Skeleton className="h-8 w-3/4 bg-gray-700"/>
+                <Skeleton className="h-4 w-full bg-gray-700"/>
+                <Skeleton className="h-4 w-2/3 bg-gray-700"/>
+                <Skeleton className="h-10 w-full bg-gray-700 rounded-full"/>
+            </CardContent>
+        </Card>
     )
 }

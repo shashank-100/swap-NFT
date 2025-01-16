@@ -1,14 +1,10 @@
 "use client"
 
-import { ConnectionProvider, useConnection, useWallet, WalletProvider } from '@solana/wallet-adapter-react';
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { LedgerWalletAdapter, PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
-import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
-import { Connection, clusterApiUrl, VersionedTransaction } from "@solana/web3.js";
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { Connection, VersionedTransaction } from "@solana/web3.js";
 import { useState, useEffect, useMemo } from 'react';
 import NFT from "@/components/NFT";
 import BuyNFT from "@/components/BuyNFT";
-import { ConnectWalletButton } from "@/components/ConnectWalletButton";
 import SimilarOnes from "@/components/SimilarNFTsOfCollection";
 import { getListingPrice, getPriceInUserToken } from "@/app/lib/rate";
 import { getSlug } from "@/app/lib/fetchNFTbyId";
@@ -16,8 +12,6 @@ import { Token } from '@/lib/types';
 import { Buy } from "@/app/lib/buy";
 import { toast } from 'sonner';
 require('@solana/wallet-adapter-react-ui/styles.css');
-
-// FIX TXN BATCHING(1 INSTEAD OF 2) + ANY BACKEND/UI BUGS
 
 async function isBlockhashExpired(connection: Connection, lastValidBlockHeight: number) {
   let currentBlockHeight = await connection.getBlockHeight('finalized');
@@ -37,7 +31,6 @@ export default function Page({ params }: { params: { nftId: string } }) {
   const [listingPrice, setListingPrice] = useState<number>(0);
 
   const { connection } = useConnection()
-  console.log("Connection Endpoint from client: ",connection.rpcEndpoint)
 
   const id = params.nftId;
 
@@ -160,25 +153,25 @@ export default function Page({ params }: { params: { nftId: string } }) {
 
 
   return (
-          <div className="container mx-auto p-2 my-8">
-            <div className="flex flex-col md:flex-row gap-8">
-              <div className="w-full md:w-1/2">
-                <NFT id={id}>
-                  <BuyNFT
-                    listingPrice={listingPrice}
-                    selectedToken={selectedToken}
-                    tokenList={tokenList}
-                    onTokenSelect={(token: Token) => setSelectedToken(token)}
-                    onBuy={handleBuyNFT}
-                    isWalletConnected={!!wallet.publicKey}
-                    id={id}
-                  />
-                </NFT>
-              </div>
-              <div className="w-full md:w-1/2">
-                <SimilarOnes id={id} publicKey={wallet.publicKey} />
-              </div>
-            </div>
-          </div>
+    <div className="container mx-auto p-4 my-8">
+    <div className="flex flex-col lg:flex-row gap-8">
+      <div className="w-full lg:w-1/2">
+        <NFT id={id}>
+          <BuyNFT
+            listingPrice={listingPrice}
+            selectedToken={selectedToken}
+            tokenList={tokenList}
+            onTokenSelect={(token) => setSelectedToken(token)}
+            onBuy={handleBuyNFT}
+            isWalletConnected={!!wallet.publicKey}
+            id={id}
+          />
+        </NFT>
+      </div>
+      <div className="w-full lg:w-1/2">
+        <SimilarOnes id={id} publicKey={wallet.publicKey} />
+      </div>
+    </div>
+  </div>
   );
 }

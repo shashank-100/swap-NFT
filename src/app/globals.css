@@ -107,3 +107,7 @@
   cursor: pointer;
   background-color: red;
  }
+
+ .glow-text {
+  text-shadow: 0 0 80px rgb(192 219 255 / 0.2), 0 0 32px rgb(192 219 255 / 0.2);
+}

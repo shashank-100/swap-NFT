@@ -21,7 +21,7 @@ export const ConnectWalletButton = () => {
   const { connected, publicKey, disconnect } = useWallet();
   return (
     <>
-    <div className="fixed top-4 z-20">
+    <div className="fixed top-4 z-20 m-4">
       {connected ? (
         <>
         <DropdownMenu>

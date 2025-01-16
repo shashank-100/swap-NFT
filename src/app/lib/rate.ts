@@ -52,14 +52,14 @@ export const getFloorPrice = async (slug: string): Promise<number|undefined> => 
         }
       }
 
-      export const getPriceInSol = async (amount: number, mint: string): Promise<number|undefined> => {
-        try{
-            const res = await fetch(`https://price.jup.ag/v6/price?ids=${mint}&vsToken=So11111111111111111111111111111111111111112`)
-            const data = await res.json();
-            const price = ((data.data[mint]?.price * amount)) || 0;
-            return price;
-          }
-          catch(err){
-            console.log(err)
-          }
-        }
+  export const getPriceInSol = async (amount: number, mint: string): Promise<number|undefined> => {
+    try{
+          const res = await fetch(`https://price.jup.ag/v6/price?ids=${mint}&vsToken=So11111111111111111111111111111111111111112`)
+          const data = await res.json();
+          const price = ((data.data[mint]?.price * amount)) || 0;
+          return price;
+      }
+      catch(err){
+          console.log(err)
+      }
+  }

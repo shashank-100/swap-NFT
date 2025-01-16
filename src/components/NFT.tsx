@@ -6,6 +6,7 @@ import React, { useMemo } from "react";
 import NFTNotFound from "./NFTNotFound";
 import { NFTMetadata } from "@/lib/types";
 import useSWR from "swr";
+import { motion } from "framer-motion";
 
 export const dynamic = 'force-static';
 
@@ -29,50 +30,47 @@ export function NFTComponent({ id, children }: { id: string; children?: React.Re
   }
 
   return (
-    <div className="relative w-full max-w-sm mx-auto">
-      <div className="absolute inset-0 rounded-lg glow-effect"></div>
-      <Card className="relative w-full max-w-sm mx-auto justify-center bg-card z-10 shadow-lg shadow-black/20">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="w-full max-w-md mx-auto"
+    >
+      <Card className="overflow-hidden bg-white shadow-xl rounded-2xl">
         {!nftMeta?.imageuri ? (
-          <Skeleton className="w-full h-[300px] aspect-[400/300] object-cover rounded-t-lg"/>
+          <Skeleton className="w-full h-[300px] rounded-t-2xl"/>
         ) : (
-          <img src={nftMeta.imageuri || "/placeholder.svg"} width="400" height="300" alt={nftMeta.name} className="w-full rounded-t-lg" style={{ aspectRatio: "400/300", objectFit: "cover" }} />
+          <img src={nftMeta.imageuri || "/placeholder.svg"} width="400" height="300" alt={nftMeta.name} className="w-full h-[300px] object-cover rounded-t-2xl" />
         )}
         <CardContent className="p-6">
-          <div>
+          <div className="space-y-4">
             {!nftMeta?.name ? (
-              <CardTitle>
-                <Skeleton className="my-2 h-6 w-[150px]" />
-              </CardTitle>
+              <Skeleton className="h-8 w-3/4" />
             ) : (
-              <CardTitle>{nftMeta.name}</CardTitle>
+              <CardTitle className="text-2xl font-bold">{nftMeta.name}</CardTitle>
             )}
             {!nftMeta?.description ? (
-              <Skeleton className="my-2 h-6 w-[250px]" />
+              <Skeleton className="h-16 w-full" />
             ) : (
-              <p className="text-muted-foreground">{nftMeta.description}</p>
+              <p className="text-gray-600">{nftMeta.description}</p>
             )}
           </div>
           {children}
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
   );
 }
 
 function LoadingSkeleton() {
   return (
-    <div className="relative w-full max-w-sm mx-auto">
-      <div className="absolute inset-0 rounded-lg glow-effect"></div>
-      <Card className="relative w-full max-w-sm mx-auto justify-center bg-card z-10 shadow-lg shadow-black/20">
-        <Skeleton className="w-full h-[300px] aspect-[400/300] object-cover rounded-t-lg"/>
-        <CardContent className="p-6">
-          <div>
-            <CardTitle>
-              <Skeleton className="my-2 h-6 w-[150px]" />
-            </CardTitle>
-            <Skeleton className="my-2 h-6 w-[250px]" />
-          </div>
-          <Skeleton className="my-2 h-10 w-full" />
+    <div className="w-full max-w-md mx-auto">
+      <Card className="overflow-hidden bg-white shadow-xl rounded-2xl">
+        <Skeleton className="w-full h-[300px] rounded-t-2xl"/>
+        <CardContent className="p-6 space-y-4">
+          <Skeleton className="h-8 w-3/4" />
+          <Skeleton className="h-16 w-full" />
+          <Skeleton className="h-12 w-full" />
         </CardContent>
       </Card>
     </div>
