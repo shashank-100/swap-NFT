@@ -57,19 +57,38 @@ export async function getNFTSFromCollections(collections: Collection[]): Promise
   
   for (let collection of collections) {
       const nftsOfCollection = await getListingsOfCollection(collection.symbol);
-      
-      const nfts = await Promise.all(nftsOfCollection.map(async ({ id, price, symbol }: { id: string, price: Decimal, symbol: string }) => {
-          const meta = (await getMetadataByMint(id))!;
-          return {
-              id: id,
-              slug: symbol,
-              price: price,
-              name: meta.name,
-              description: meta.description,
-              imageuri: meta.imageuri,
-              listed: true
-          };
-      }));
+      const nfts = await Promise.all(nftsOfCollection.map(async ({ id, price, symbol }: { id: string; price: Decimal; symbol: string }) => {
+        try {
+            const response = await fetch(`/api/getMetadataByMint?id=${id}`);
+            
+            if (!response.ok) {
+                throw new Error(`Error fetching metadata for ID ${id}: ${response.statusText}`);
+            }
+    
+            const meta = await response.json();
+    
+            return {
+                id: id,
+                slug: symbol,
+                price: price,
+                name: meta.name,
+                description: meta.description,
+                imageuri: meta.imageuri,
+                listed: true
+            };
+        } catch (error) {
+            console.error(error);
+            return {
+                id: id,
+                slug: symbol,
+                price: price,
+                name: 'NFTNotFound',
+                description: 'InvalidNFT',
+                imageuri: '',
+                listed: false
+            };
+        }
+    }));    
       
       arr.push(...nfts);
   }

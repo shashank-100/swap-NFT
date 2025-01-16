@@ -5,16 +5,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { Skeleton } from "./ui/skeleton";
 import { Toaster } from "sonner";
 import { Token } from "@/lib/types";
-
-interface BuyNFTProps {
-  listingPrice: number;
-  selectedToken: Token;
-  tokenList: Token[];
-  onTokenSelect: (token: Token) => void;
-  onBuy: () => void;
-  isWalletConnected: boolean;
-  id: string;
-}
+import { BuyNFTProps } from "@/lib/types";
 
 export default function BuyNFT({
   listingPrice,

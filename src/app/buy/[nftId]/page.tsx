@@ -17,14 +17,14 @@ import { Buy } from "@/app/lib/buy";
 import { toast } from 'sonner';
 require('@solana/wallet-adapter-react-ui/styles.css');
 
+// FIX TXN BATCHING(1 INSTEAD OF 2) + ANY BACKEND/UI BUGS
+
 async function isBlockhashExpired(connection: Connection, lastValidBlockHeight: number) {
   let currentBlockHeight = await connection.getBlockHeight('finalized');
   return (currentBlockHeight > lastValidBlockHeight - 150);
 }
 
 export default function Page({ params }: { params: { nftId: string } }) {
-  const network = WalletAdapterNetwork.Mainnet;
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
   const wallet = useWallet();
   const [tokenList, setTokenList] = useState<Token[]>([]);
   const [selectedToken, setSelectedToken] = useState<Token>({
@@ -35,9 +35,9 @@ export default function Page({ params }: { params: { nftId: string } }) {
   });
   const [slug, setSlug] = useState<string>("");
   const [listingPrice, setListingPrice] = useState<number>(0);
-  const [defaultPriceValue, setDefaultPriceValue] = useState<number>(0);
 
   const { connection } = useConnection()
+  console.log("Connection Endpoint from client: ",connection.rpcEndpoint)
 
   const id = params.nftId;
 
@@ -55,7 +55,6 @@ export default function Page({ params }: { params: { nftId: string } }) {
           selectedToken.address
         ))!;
         setListingPrice(defaultPriceValue);
-        setDefaultPriceValue(defaultPriceValue);
 
       } catch (err) {
         console.error(err);
@@ -159,16 +158,8 @@ export default function Page({ params }: { params: { nftId: string } }) {
     }
   };
 
-  const wallets = useMemo(
-    () => [new PhantomWalletAdapter(), new LedgerWalletAdapter()],
-    []
-  );
 
   return (
-    <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets} autoConnect>
-        <WalletModalProvider>
-          <ConnectWalletButton />
           <div className="container mx-auto p-2 my-8">
             <div className="flex flex-col md:flex-row gap-8">
               <div className="w-full md:w-1/2">
@@ -189,8 +180,5 @@ export default function Page({ params }: { params: { nftId: string } }) {
               </div>
             </div>
           </div>
-        </WalletModalProvider>
-      </WalletProvider>
-    </ConnectionProvider>
   );
 }

@@ -3,12 +3,13 @@
 import axios from "axios";
 import { Transaction, VersionedTransaction, PublicKey, Connection,TransactionInstruction,TransactionMessage, ComputeBudgetProgram, AddressLookupTableAccount, VersionedMessage } from "@solana/web3.js";
 import fetch from 'cross-fetch';
-import bs58 from 'bs58';
 
 export async function Buy(buyerAddress: string, mint: string, priceInUserToken: number, token: string){
     const buyer = new PublicKey(buyerAddress);
-    const HELIUS_API_KEY = process.env.HELIUS_API_KEY || ''
-    const connection = new Connection(`https://mainnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`, "confirmed");
+    const endpoint = process.env.RPC_URL || "https://api.mainnet-beta.solana.com";
+    console.log("Endpoint: ",endpoint)
+    const connection = new Connection(endpoint, "confirmed");
+    console.log(connection)
     const bearerToken = process.env.MAGIC_EDEN_API_KEY || '';
 
     // 2 types of buy
@@ -55,8 +56,6 @@ export async function Buy(buyerAddress: string, mint: string, priceInUserToken: 
         if (error.response) {
             console.error("API response error:", error.response.data);
         }
-        // Here you might want to set default values or handle the error in a way 
-        // that makes sense for your application
         auctionHouseAddress = '';
         seller = '';
         price = 0;
@@ -66,56 +65,7 @@ export async function Buy(buyerAddress: string, mint: string, priceInUserToken: 
         decimals = 2;
         amount = 0;
     }
-      //-SOL+NFT component(MOST IMPORTANT PART)
 
-      // add additional query params
-      // check the if the versioned transaction is being serialized/deserialized properly
-      // finally combine instructions into a single versioned transaction
-    let getBuyIx, buy_now_signed_tx_data, serializedTxData, deserializedIns, sample_nft_buy_tx, lookup_tables;
-    try {
-        getBuyIx = await axios.get(`https://api-mainnet.magiceden.dev/v2/instructions/buy_now`, 
-            {
-                headers: {
-                    "Authorization": `Bearer ${bearerToken}`,
-                    "Accept": "application/json"
-                },
-                params: {
-                  buyer: buyer.toString(),
-                  seller: seller.toString(),
-                  auctionHouseAddress: auctionHouseAddress,
-                  tokenMint: mint,
-                  tokenATA: tokenATA,
-                  price: price,
-                  sellerReferral: sellerReferral,
-                  sellerExpiry: sellerExpiry,
-                }
-        });
-        console.log("BUY INSTRUCTION: ", getBuyIx);
-
-        buy_now_signed_tx_data = getBuyIx.data.v0.txSigned.data;
-        serializedTxData = buy_now_signed_tx_data;
-
-        try {
-            deserializedIns = VersionedTransaction.deserialize(serializedTxData).message;
-            sample_nft_buy_tx = new VersionedTransaction(deserializedIns);
-        } catch (err) {
-            console.error("Error deserializing transaction:", err);
-            throw new Error("Failed to deserialize transaction data");
-        }
-
-        console.log("buy_now_ixn: ", deserializedIns);
-
-        lookup_tables = sample_nft_buy_tx.message.addressTableLookups.map((acc) => acc.accountKey.toBase58());
-
-    } catch (error: any) {
-        console.error("An error occurred:", error.message);
-        if (error.response) {
-            console.error("API response error:", error.response.data);
-        }
-        throw error;
-    }
-
-    //ALTs(Address Lookup Tables)
     const getAddressLookupTableAccounts = async (
       keys: string[]
     ): Promise<AddressLookupTableAccount[]> => {
@@ -136,8 +86,6 @@ export async function Buy(buyerAddress: string, mint: string, priceInUserToken: 
     
         return acc;
       }, new Array<AddressLookupTableAccount>());
-
-      
     };
 
     const quoteResponse = await (await fetch(`https://quote-api.jup.ag/v6/quote?inputMint=${token}&outputMint=So11111111111111111111111111111111111111112&amount=${amount}&slippageBps=100`)).json();
@@ -170,17 +118,8 @@ export async function Buy(buyerAddress: string, mint: string, priceInUserToken: 
         addressLookupTableAddresses, // The lookup table addresses that you can use if you are using versioned transaction.
       } = instructions;
 
-      const swapInstruction = new TransactionInstruction({
-        programId: new PublicKey(swapInstructionPayload.programId),
-        keys: swapInstructionPayload.accounts.map((key :any) => ({
-          pubkey: new PublicKey(key.pubkey),
-            isSigner: key.isSigner,
-            isWritable: key.isWritable,
-          })),
-        data: Buffer.from(swapInstructionPayload.data, "base64"),
-      });
 
-      console.log("SWAP INSTRUCTION", instructions.swapInstruction)
+      // console.log("SWAP INSTRUCTION", instructions.swapInstruction)
       
       const deserializeInstruction = (instruction: any) => {
         return new TransactionInstruction({
@@ -194,24 +133,79 @@ export async function Buy(buyerAddress: string, mint: string, priceInUserToken: 
         });
       };
       const swap_ix = deserializeInstruction(swapInstructionPayload)
-      console.log("Swap Ixn: ", swap_ix)
+      // console.log("Swap Ixn: ", swap_ix)
+
+      const addressLookupTableAccounts: AddressLookupTableAccount[] = [];
+    addressLookupTableAccounts.push(
+      ...(await getAddressLookupTableAccounts(addressLookupTableAddresses))
+    );
+    // console.log("ALTS: ", addressLookupTableAccounts);
+
+      const tx1_instructions = [...computeBudgetInstructions.map(deserializeInstruction),...setupInstructions.map(deserializeInstruction), swap_ix, deserializeInstruction(cleanupInstruction)]
+      const newBlockhash1 = (await connection.getLatestBlockhash()).blockhash;
+      const m1 = new TransactionMessage({
+        payerKey: buyer,
+        recentBlockhash: newBlockhash1,
+        instructions: tx1_instructions,
+        }).compileToV0Message([...addressLookupTableAccounts]);
+
+        const finalTX1 = new VersionedTransaction(m1);
+
+    
+      //-SOL+NFT component(MOST IMPORTANT PART)
+
+      // add additional query params
+      // check the if the versioned transaction is being serialized/deserialized properly
+      // finally combine instructions into a single versioned transaction
+    let getBuyIx, buy_now_signed_tx_data, serializedTxData, deserializedIns, sample_nft_buy_tx, lookup_tables;
+    try {
+        getBuyIx = await axios.get(`https://api-mainnet.magiceden.dev/v2/instructions/buy_now`, 
+            {
+                headers: {
+                    "Authorization": `Bearer ${bearerToken}`,
+                    "Accept": "application/json"
+                },
+                params: {
+                  buyer: buyer.toString(),
+                  seller: seller.toString(),
+                  auctionHouseAddress: auctionHouseAddress,
+                  tokenMint: mint,
+                  tokenATA: tokenATA,
+                  price: price,
+                  sellerReferral: sellerReferral,
+                  sellerExpiry: sellerExpiry,
+                }
+        });
+        // console.log("BUY INSTRUCTION: ", getBuyIx);
+
+        buy_now_signed_tx_data = getBuyIx.data.v0.txSigned.data;
+        serializedTxData = buy_now_signed_tx_data;
+
+        try {
+            deserializedIns = VersionedTransaction.deserialize(serializedTxData).message;
+            sample_nft_buy_tx = new VersionedTransaction(deserializedIns);
+        } catch (err) {
+            console.error("Error deserializing transaction:", err);
+            throw new Error("Failed to deserialize transaction data");
+        }
+
+        // console.log("buy_now_ixn: ", deserializedIns);
+
+        lookup_tables = sample_nft_buy_tx.message.addressTableLookups.map((acc) => acc.accountKey.toBase58());
+
+    } catch (error: any) {
+        console.error("An error occurred:", error.message);
+        if (error.response) {
+            console.error("API response error:", error.response.data);
+        }
+        throw error;
+    }
+
     
     const lookup_tables_nft = (await getAddressLookupTableAccounts(lookup_tables));
     const buy_now_ixn = TransactionMessage.decompile(sample_nft_buy_tx.message, {addressLookupTableAccounts: lookup_tables_nft}).instructions;
 
-    const addressLookupTableAccounts: AddressLookupTableAccount[] = [];
-    addressLookupTableAccounts.push(
-      ...(await getAddressLookupTableAccounts(addressLookupTableAddresses))
-    );
-    console.log("ALTS: ", addressLookupTableAccounts);
 
-    const tx1_instructions = [...computeBudgetInstructions.map(deserializeInstruction),...setupInstructions.map(deserializeInstruction), swap_ix, deserializeInstruction(cleanupInstruction)]
-    const newBlockhash1 = (await connection.getLatestBlockhash()).blockhash;
-    const m1 = new TransactionMessage({
-      payerKey: buyer,
-      recentBlockhash: newBlockhash1,
-      instructions: tx1_instructions,
-      }).compileToV0Message([...addressLookupTableAccounts]);
 
       const tx2_instructions = [...buy_now_ixn ];
       const newBlockhash2 = (await connection.getLatestBlockhash()).blockhash;
@@ -221,7 +215,6 @@ export async function Buy(buyerAddress: string, mint: string, priceInUserToken: 
         instructions: tx2_instructions, //also add the buy_now NFT instruction
         }).compileToV0Message([...lookup_tables_nft]);
 
-    const finalTX1 = new VersionedTransaction(m1);
   
     const finalTX2 = new VersionedTransaction(m2);
     return [finalTX1.serialize(), finalTX2.serialize()];

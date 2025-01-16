@@ -12,8 +12,8 @@ type RpcInterfaceWithAsset = RpcInterface & {
 
 export const getMetadataByMint = async (id :string) : Promise<{name: string, description: string, imageuri: string}|undefined> => {
     try {
-        const api_key = process.env.HELIUS_API_KEY || '';
-        const umi = createUmi(`https://mainnet.helius-rpc.com/?api-key=${api_key}`).use(dasApi())
+        const endpoint = process.env.RPC_URL || 'https://api.mainnet-beta.solana.com';
+        const umi = createUmi(endpoint).use(dasApi())
         const assetId = publicKey(id);
         const asset = await (umi.rpc as RpcInterfaceWithAsset).getAsset(assetId);
 
@@ -106,20 +106,4 @@ catch(err){
   if (err instanceof AxiosError) console.log(err.response?.data.errors);
     else console.error(err);
 }
-}
-
-export async function getListingByID(id: string){
-  try{
-    
-  const response = await axios.get(`https://api-mainnet.magiceden.dev/v2/tokens/${id}/listings`, {
-      headers: {
-          "Accept": "application/json"
-      }
-  });
-  return response.data;
-  }
-  catch(err){
-    if (err instanceof AxiosError) console.log(err.response?.data.errors);
-      else console.error(err);
-  }
 }
