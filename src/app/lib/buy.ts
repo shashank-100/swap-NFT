@@ -3,13 +3,13 @@
 import axios from "axios";
 import { Transaction, VersionedTransaction, PublicKey, Connection,TransactionInstruction,TransactionMessage, ComputeBudgetProgram, AddressLookupTableAccount, VersionedMessage } from "@solana/web3.js";
 import fetch from 'cross-fetch';
+import { unstable_noStore as noStore } from "next/cache";
 
 export async function Buy(buyerAddress: string, mint: string, priceInUserToken: number, token: string){
+    noStore();
     const buyer = new PublicKey(buyerAddress);
     const endpoint = process.env.RPC_URL || "https://api.mainnet-beta.solana.com";
-    console.log("Endpoint: ",endpoint)
     const connection = new Connection(endpoint, "confirmed");
-    console.log(connection)
     const bearerToken = process.env.MAGIC_EDEN_API_KEY || '';
 
     // 2 types of buy
