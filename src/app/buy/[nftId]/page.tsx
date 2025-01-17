@@ -9,7 +9,6 @@ import SimilarOnes from "@/components/SimilarNFTsOfCollection";
 import { getListingPrice, getPriceInUserToken } from "@/app/lib/rate";
 import { getSlug } from "@/app/lib/fetchNFTbyId";
 import { Token } from '@/lib/types';
-import { Buy } from "@/app/lib/buy";
 import { toast } from 'sonner';
 require('@solana/wallet-adapter-react-ui/styles.css');
 
@@ -84,11 +83,32 @@ export default function Page({ params }: { params: { nftId: string } }) {
     const priceInUserToken = listingPrice;
     
     try {
-      const [swaptx_serialized, buynfttx_serialized] = await Buy(wallet.publicKey?.toBase58() || '', id, priceInUserToken, selectedToken.address);
-      const [swaptx, buynfttx] = [
-        VersionedTransaction.deserialize(swaptx_serialized),
-        VersionedTransaction.deserialize(Buffer.from(buynfttx_serialized) as Uint8Array)
-      ];
+      const response = await fetch('/api/buy', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          buyerAddress: wallet.publicKey?.toBase58() || '',
+          mint: id,
+          priceInUserToken,
+          token: selectedToken.address
+        })
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to get transaction data');
+      }
+      // const [swaptx_serialized, buynfttx_serialized] = await Buy(wallet.publicKey?.toBase58() || '', id, priceInUserToken, selectedToken.address);
+      // const [swaptx, buynfttx] = [
+      //   VersionedTransaction.deserialize(swaptx_serialized),
+      //   VersionedTransaction.deserialize(Buffer.from(buynfttx_serialized) as Uint8Array)
+      // ];
+      const [swaptx, buynfttx] = data.transactions.map(
+        (tx: string) => VersionedTransaction.deserialize(
+          Buffer.from(tx, 'base64') as Uint8Array
+        )
+      );
 
       const {
         context: { slot: minContextSlot },
