@@ -141,15 +141,21 @@ export default function Page({ params }: { params: { nftId: string } }) {
         const signature2 = await wallet.sendTransaction(buynfttx, connection, { minContextSlot: newMinContextSlot });
         console.log("NFT BUY TXN SIG: ",signature2)
 
-        toast.info('Buying the NFT...', {
-          id: 'nft-purchase',
-          duration: Infinity,
-        });
-
-        await connection.confirmTransaction(
+        // toast.info('Buying the NFT...', {
+        //   id: 'nft-purchase',
+        //   duration: Infinity,
+        // });
+        toast.promise(() => connection.confirmTransaction(
           { blockhash: newBlockhash, lastValidBlockHeight: newLastValidBlockHeight, signature: signature2 },
           "confirmed"
-        );
+        ), {
+          loading: 'Buying the NFT...',
+          id: 'nft-purchase',
+          success: (data) => {
+            return `Successfully Bought the NFT!`;
+          },
+          error: 'Error',
+        });
 
         let hashExpired = false;
         let txSuccess = false;
