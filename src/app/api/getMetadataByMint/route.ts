@@ -26,10 +26,8 @@ export async function GET(request: Request) {
         return NextResponse.json({ name, description, imageuri });
     } catch (err) {
         if (err instanceof AxiosError) {
-            console.error(err.response?.data.errors);
             return NextResponse.json({ error: err.response?.data.errors }, { status: 500 });
         } else {
-            console.error(err);
             return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
         }
     }
