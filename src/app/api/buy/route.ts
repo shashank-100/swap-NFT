@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
+import { Helius } from "helius-sdk";
 import { 
   Transaction, 
   VersionedTransaction, 
@@ -7,7 +8,8 @@ import {
   Connection,
   TransactionInstruction,
   TransactionMessage, 
-  AddressLookupTableAccount 
+  AddressLookupTableAccount, 
+  ComputeBudgetProgram
 } from "@solana/web3.js";
 import { unstable_noStore as noStore } from "next/cache";
 
@@ -30,6 +32,7 @@ export async function POST(req: NextRequest) {
     const endpoint = process.env.RPC_URL || "https://api.mainnet-beta.solana.com";
     const connection = new Connection(endpoint, "confirmed");
     const bearerToken = process.env.MAGIC_EDEN_API_KEY || '';
+    const helius = new Helius(process.env.HELIUS_API_KEY || '');
 
     const getAddressLookupTableAccounts = async (
       keys: string[]
@@ -107,11 +110,20 @@ export async function POST(req: NextRequest) {
           quoteResponse,
           userPublicKey: buyer.toBase58(),
           wrapUnwrapSOL: false,
-          dynamicComputeUnitLimit: false,
-          prioritizationFeeLamports: 'auto'
+          dynamicComputeUnitLimit: true,
+          dynamicSlippage: {"minBps": 50, "maxBps": 300},
+          prioritizationFeeLamports: {
+            priorityLevelWithMaxLamports: {
+              maxLamports: 4000000,
+              global: false,
+              priorityLevel: "high"
+            }
+          }
         })
       })
     ).json();
+
+    console.log("SWAP Instructions: ", instructions)
 
     if (instructions.error) {
       throw new Error("Failed to get swap instructions: " + instructions.error);
@@ -155,6 +167,7 @@ export async function POST(req: NextRequest) {
     }).compileToV0Message([...addressLookupTableAccounts]);
 
     const finalTX1 = new VersionedTransaction(m1);
+
 
     let buy_now_signed_tx_data, serializedTxData, deserializedIns, sample_nft_buy_tx, lookup_tables;
     try {
@@ -202,14 +215,17 @@ export async function POST(req: NextRequest) {
       sample_nft_buy_tx.message,
       { addressLookupTableAccounts: lookup_tables_nft }
     ).instructions;
+    console.log("BUY NOW IXN: ",buy_now_ixn)
 
     const tx2_instructions = [...buy_now_ixn];
+
     const newBlockhash2 = (await connection.getLatestBlockhash()).blockhash;
     const m2 = new TransactionMessage({
       payerKey: buyer,
       recentBlockhash: newBlockhash2,
       instructions: tx2_instructions,
     }).compileToV0Message([...lookup_tables_nft]);
+    console.log("TXN2 MESSAGE: ",m2)
 
     const finalTX2 = new VersionedTransaction(m2);
 

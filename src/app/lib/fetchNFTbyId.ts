@@ -29,6 +29,9 @@ export const getMetadataByMint = async (id :string) : Promise<{name: string, des
       }
 }
 
+// WEEKEND - COMPLETE PORTFOLIO(UPTIL NOW)[ADD MISSING DEMOS, PORTFOLIO WEBSITE] + PICK A BOUNTY & GO ALL IN
+// FROM MONDAY(NEXT WEEK AND AFTER) - COMPLETE WORK ON BELZIN + PICK UP ATLEAST 2 OSS CONTRIB BOUNTIES + START APPLYING FOR INTERNSHIPS
+
 export async function getSlug(id: string): Promise<string|undefined>{
   try {
     const { data } = await axios.post(
@@ -98,12 +101,11 @@ export async function getSlug(id: string): Promise<string|undefined>{
         },
       }
     );
-
     const slug:string = data.data.mint.slug;
     return slug;
   }
-catch(err){
-  if (err instanceof AxiosError) console.log(err.response?.data.errors);
-    else console.error(err);
-}
+  catch(err){
+    if (err instanceof AxiosError) console.log(err.response?.data.errors);
+      else console.error(err);
+  }
 }
