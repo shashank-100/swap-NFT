@@ -136,12 +136,15 @@ export default function Page({ params }: { params: { nftId: string } }) {
           value: { blockhash: newBlockhash, lastValidBlockHeight: newLastValidBlockHeight },
         } = await connection.getLatestBlockhashAndContext();
 
+        
+
+        const signature2 = await wallet.sendTransaction(buynfttx, connection, { minContextSlot: newMinContextSlot });
+        console.log("NFT BUY TXN SIG: ",signature2)
+
         toast.info('Buying the NFT...', {
           id: 'nft-purchase',
           duration: Infinity,
         });
-
-        const signature2 = await wallet.sendTransaction(buynfttx, connection, { minContextSlot: newMinContextSlot });
 
         await connection.confirmTransaction(
           { blockhash: newBlockhash, lastValidBlockHeight: newLastValidBlockHeight, signature: signature2 },
@@ -154,12 +157,6 @@ export default function Page({ params }: { params: { nftId: string } }) {
           const { value: status } = await connection.getSignatureStatus(signature2);
           if (status && ((status.confirmationStatus === 'confirmed' || status.confirmationStatus === 'finalized'))) {
             txSuccess = true;
-            // toast('Transaction Confirmed', {
-            //   action: {
-            //     label: 'View on Solscan',
-            //     onClick: () => { window.open(`https://solscan.io/tx/${signature2}`) },
-            //   },
-            // });
             toast.dismiss('nft-purchase');
             toast('Transaction Confirmed', {
               id: 'transaction-success',
@@ -176,19 +173,19 @@ export default function Page({ params }: { params: { nftId: string } }) {
           await new Promise(resolve => setTimeout(resolve, 2500));
         }
       } catch (error) {
-        toast.dismiss('nft-purchase');
-        toast.error('NFT Purchase Failed', {
-          id: 'nft-purchase-error',
-        });
-        console.error("Transaction failed:", error);
+          toast.dismiss('nft-purchase');
+          toast.error('NFT Purchase Failed', {
+            id: 'nft-purchase-error',
+          });
+          console.error("Transaction failed:", error);
       }
     } catch (err) {
-      toast.dismiss('transaction-init');
-      toast.dismiss('swap-transaction');
-      toast.error('Transaction Failed', {
-        id: 'transaction-error',
-      });
-      console.error(err);
+        toast.dismiss('transaction-init');
+        toast.dismiss('swap-transaction');
+        toast.error('Transaction Failed', {
+          id: 'transaction-error',
+        });
+        console.error(err);
     }
   };
 
