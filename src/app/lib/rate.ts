@@ -31,11 +31,9 @@ export const getFloorPrice = async (slug: string): Promise<number|undefined> => 
       });
       const resp = await response.json();
       const priceOfListingInSol = resp[0].price;
-      console.log("Current Listing Price Of NFT In SOL: ",priceOfListingInSol)
       return priceOfListingInSol;
     }
     catch(err){
-      console.error(err)
       throw Error("Invalid Response")
     }
     }
@@ -48,7 +46,7 @@ export const getFloorPrice = async (slug: string): Promise<number|undefined> => 
         return price;
         }
         catch(err){
-          console.log(err)
+          throw Error("Invalid Price")
         }
       }
 
@@ -60,6 +58,6 @@ export const getFloorPrice = async (slug: string): Promise<number|undefined> => 
           return price;
       }
       catch(err){
-          console.log(err)
+        throw Error("Invalid Price")
       }
   }

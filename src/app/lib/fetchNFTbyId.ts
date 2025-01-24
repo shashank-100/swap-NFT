@@ -24,8 +24,8 @@ export const getMetadataByMint = async (id :string) : Promise<{name: string, des
         return {name, description, imageuri};
       } 
       catch (err) {
-        if (err instanceof AxiosError) console.log(err.response?.data.errors);
-        else console.error(err);
+        if (err instanceof AxiosError) throw Error("Axios Error");
+        else throw Error("Invalid")
       }
 }
 
@@ -105,7 +105,7 @@ export async function getSlug(id: string): Promise<string|undefined>{
     return slug;
   }
   catch(err){
-    if (err instanceof AxiosError) console.log(err.response?.data.errors);
-      else console.error(err);
+    if (err instanceof AxiosError) throw Error("Axios Error");
+      else throw Error("Error occured while getting the slug");
   }
 }

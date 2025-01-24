@@ -30,7 +30,6 @@ export async function getRelatedNFTs(id: string){
       nfts = nfts.slice(0,nfts.length/3)
       return nfts;
   } catch(err){
-    console.error(err)
     throw Error("No NFTs found of given collection!")
   }
 
@@ -47,7 +46,6 @@ export async function getCollections(): Promise<Collection[]>{
     return collections;
   } catch(err){
       let default_collections = [{symbol : 'mad_lads'},{symbol : 'giga_buds'},{symbol : 'solana_monkey_business'},{symbol : 'mimany'},{symbol : 'rune_pkers'},{symbol : 'wifhoodies'},{symbol : 'claynosaurz'}];
-      console.error(err);
       return default_collections;
   }
 }
@@ -77,7 +75,6 @@ export async function getNFTSFromCollections(collections: Collection[]): Promise
                 listed: true
             };
         } catch (error) {
-            console.error(error);
             return {
                 id: id,
                 slug: symbol,
@@ -116,7 +113,6 @@ export async function getListingsOfCollection(symbol: string): Promise<Listing[]
     return listings;
 
     } catch(err){
-      console.error(err);
       throw Error("unable to fetch listings of the given collection!")
     } 
 }
@@ -132,9 +128,8 @@ export async function submitData(): Promise<void>{
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(body),
             });
-            console.log("POST SUCCESS")
           } catch (error) {
-            console.error(error);
+            throw Error("Unable to submit data")
           }
     }
    }
@@ -146,10 +141,8 @@ export async function submitData(): Promise<void>{
         headers: { 'Content-Type': 'application/json' }
       });
       const list = (await res.json())
-      console.log("list is here")
       return list;
     } catch (error) {
-      console.error(error);
       throw Error("Unable to fetch list from /api/fetchlist")
     }
   }
@@ -163,6 +156,6 @@ export async function submitData(): Promise<void>{
       const count = (await res.json())
       return count;
     } catch (error) {
-      console.error(error);
+      throw Error("Unable to get Count")
     }
 }
