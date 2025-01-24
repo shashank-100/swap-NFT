@@ -13,8 +13,8 @@ import {
 } from "@solana/web3.js";
 import { unstable_noStore as noStore } from "next/cache";
 
-export const runtime = 'edge';
-export const dynamic = 'force-dynamic';
+// export const runtime = 'edge';
+// export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {
