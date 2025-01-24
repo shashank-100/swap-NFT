@@ -32,7 +32,6 @@ export async function POST(req: NextRequest) {
     const endpoint = process.env.RPC_URL || "https://api.mainnet-beta.solana.com";
     const connection = new Connection(endpoint, "confirmed");
     const bearerToken = process.env.MAGIC_EDEN_API_KEY || '';
-    const helius = new Helius(process.env.HELIUS_API_KEY || '');
 
     const getAddressLookupTableAccounts = async (
       keys: string[]
@@ -122,8 +121,6 @@ export async function POST(req: NextRequest) {
         })
       })
     ).json();
-
-    console.log("SWAP Instructions: ", instructions)
 
     if (instructions.error) {
       throw new Error("Failed to get swap instructions: " + instructions.error);
@@ -215,7 +212,6 @@ export async function POST(req: NextRequest) {
       sample_nft_buy_tx.message,
       { addressLookupTableAccounts: lookup_tables_nft }
     ).instructions;
-    console.log("BUY NOW IXN: ",buy_now_ixn)
 
     const tx2_instructions = [...buy_now_ixn];
 
@@ -225,7 +221,6 @@ export async function POST(req: NextRequest) {
       recentBlockhash: newBlockhash2,
       instructions: tx2_instructions,
     }).compileToV0Message([...lookup_tables_nft]);
-    console.log("TXN2 MESSAGE: ",m2)
 
     const finalTX2 = new VersionedTransaction(m2);
 
