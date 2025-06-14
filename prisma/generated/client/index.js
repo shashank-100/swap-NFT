@@ -128,7 +128,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/shivaseth/Desktop/Technology/WEB3/100xdevs-hackathon/nft-x-token-swap/prisma/generated/client",
+      "value": "/Users/shashank/Documents/GitHub/swap-NFT/prisma/generated/client",
       "fromEnvVar": null
     },
     "config": {
@@ -142,12 +142,11 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/shivaseth/Desktop/Technology/WEB3/100xdevs-hackathon/nft-x-token-swap/prisma/schema.prisma",
+    "sourceFilePath": "/Users/shashank/Documents/GitHub/swap-NFT/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../..",
   "clientVersion": "5.19.1",
